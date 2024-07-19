@@ -30,8 +30,8 @@ Access the application at [https://encryptify.onrender.com](https://encryptify.o
 
 **Advanced Encryption Standard (AES)** is a symmetric encryption algorithm widely used for securing data. Here’s a brief overview of how AES works:
 
-![AES Algorithm](![image](https://github.com/user-attachments/assets/de74aa53-aef0-4a07-9d80-ea791d543734)
-)
+(![AES Algorithm](https://github.com/user-attachments/assets/de74aa53-aef0-4a07-9d80-ea791d543734))
+
 
 ### Steps in AES Encryption:
 
