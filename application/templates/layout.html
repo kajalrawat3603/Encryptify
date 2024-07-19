@@ -30,20 +30,20 @@
 
   <header>
     <nav>
-      <a href="/" style="font-family: 'Rubik Doodle Triangles', system-ui; font-size: 80px; color:whitesmoke; width: 100%; display: block; text-decoration: none;
-            background-color: rgba(255, 255, 255, 0.232);">Encryptify
-        <h3 style="font-family: 'Genos', sans-serif; color: white; display:inline; text-decoration: underline;">
+      <a href="/" style="width: 100%; display: block; text-decoration: none;
+            background-color: rgba(255, 255, 255, 0.232); text-align: center;padding-bottom: 20px;">
+        <h3 class="heading">
+          Encryptify
         </h3>
       </a>
-      <ul>
-        <li><a href="/" style="color: white;">Send</a></li>
-        <li><a href="/decryption" style="color: white;">Receive</a></li>
-      </ul>
     </nav>
   </header>
 
   <div style="width: 100%; display: flex; justify-content: center; align-items: center;">
-    <div class="slider"></div>
+    <div class="slider">
+      <a href="/" style="color: white;"><button>Send</button></a>
+      <a href="/decryption" style="color: white;"><button>Receive</button></a>
+    </div>
     {% block content %}
     {% endblock %}
   </div>
