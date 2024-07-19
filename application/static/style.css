@@ -4,16 +4,24 @@ nav {
     display: flex;
     align-items: center;
     justify-items: center;
+    justify-content: center;
 }
 
 ul {
     display: flex;
     align-items: center;
-    gap: 4rem;
     justify-items: center;
-    list-style-type: none;
     justify-content: center;
+    list-style-type: none;
     padding-bottom: 1rem;
+}
+
+.heading {
+    font-family: 'Rubik Doodle Triangles', system-ui;
+    color: white;
+    display: inline;
+    font-size: 5rem;
+    color: whitesmoke;
 }
 
 body {
@@ -25,12 +33,43 @@ body {
     width: 55%;
     text-align: center;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-items: center;
+    justify-content: center;
     background-image: url('images/image.png');
     background-size: cover;
     background-position: center;
     height: 550px;
     margin-top: 40px;
+    gap: 2rem;
+}
+
+.slider a:hover {
+    text-decoration: none;
+}
+
+.slider a {
+    text-decoration: none;
+}
+
+.slider a button {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30vh;
+    height: 10vh;
+    font-size: x-large;
+    background-color: #c7ddf990;
+    border: transparent;
+    text-decoration: none;
+    border-radius: 10px;
+}
+
+.slider a button:hover {
+    background-color: #ffffff;
+    color: black;
 }
 
 .box {
