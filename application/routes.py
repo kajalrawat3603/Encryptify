@@ -9,11 +9,14 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from .form import EncryptionForm, UploadImagePath, DecryptionForm
 from application import app
+from dotenv import load_dotenv
 
 upload_image_path = UploadImagePath()
-secret_key = secrets.token_hex(16)
-print("Generated Secret Key:", secret_key)
+
+load_dotenv()
+secret_key = os.getenv('SECRET_KEY')
 app.secret_key = secret_key
+
 
 # Database creation functions
 def create_files_db():
