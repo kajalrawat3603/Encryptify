@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>Encryptify</title>
+</head>
+
+<body>
+    {% extends "layout.html" %}
+    {% block content %}
+    <div class="box position-relative">
+        <button type="button" class="close position-absolute" style="top: 10px; right: 10px;" aria-label="Close"
+            onclick="redirectToIndex()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="container mt-4 text-center">
+            <h4>Image Decryption</h4>
+        </div>
+        <form method="post">
+            {{ form.csrf_token }}
+            <div class="form-group mt-3">
+                {{ form.decryption_key.label }}
+                {{ form.decryption_key(class="form-control", id="decryption_key") }}
+                {% if form.decryption_key.errors %}
+                {% for error in form.decryption_key.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">{{ form.submit.label }}</button>
+        </form>
+        {% if success %}
+        <div class="container mt-4">
+            <h5>Decryption Successful!</h5>
+            <a href="{{url_for('decryption_download', key=download_file) }}" class="btn btn-success mt-3">Download
+                Decrypted File</a>
+        </div>
+        {% endif %}
+        {% if error_message %}
+        <div class="container mt-4">
+            <h5>Error:</h5>
+            <p>{{ error_message }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function redirectToIndex() {
+            window.location.href = '/';
+        }
+    </script>
+
+    {% endblock %}
+</body>
+
+</html>

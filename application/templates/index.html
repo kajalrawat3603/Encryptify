@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>Encryptify</title>
+</head>
+
+<body>
+    {% extends "layout.html" %}
+    {% block content %}
+    <div class="dropbox">
+        <div class="container mt-4">
+            <h4 class="text-center">Upload File</h4>
+
+            <form action="{{ url_for('upload') }}" class="dropzone" id="file-dropzone">
+                <div class="dz-message" data-dz-message><span>Drop files here or click to upload.</span></div>
+                <div class="progress" style="display: none;">
+                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
+                        aria-valuemax="100">0%</div>
+                </div>
+            </form>
+
+            <div class="d-flex justify-content-center mt-4">
+                <form action="{{ url_for('encryption') }}" method="post" onsubmit="return checkFileSelected('encrypt')">
+                    <button type="submit" class="btn btn-outline-dark m-2" name="encrypt">Encrypt File</button>
+                </form>
+                <form action="{{ url_for('decryption') }}" method="post" onsubmit="return checkFileSelected('decrypt')">
+                    <button type="submit" class="btn btn-outline-dark m-2" name="decrypt">Decrypt File</button>
+                </form>
+
+                <button class="btn btn-outline-dark m-2" id="remove-files-btn" onclick="removeAllFiles()"
+                    style="display: none;">Remove Files</button>
+                <button class="btn btn-outline-dark m-2" id="preview-files-btn" onclick="showPreview()"
+                    style="display: none;">Preview</button>
+            </div>
+        </div>
+
+        <div class="preview-container" style="display: none;">
+            <button type="button" class="close position-absolute" style="top: 10px; right: 10px;" aria-label="Close"
+                onclick="redirectToIndex()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function redirectToIndex() {
+            document.querySelector('.preview-container').style.display = 'none';
+            document.querySelector('.preview-container').innerHTML = '';
+        }
+
+        Dropzone.autoDiscover = false;
+        var myDropzone = new Dropzone("#file-dropzone", {
+            paramName: "file",
+            maxFilesize: 50,
+            maxFiles: 1,
+            acceptedFiles: "image/*,.pdf,.mp4,.avi,.doc,.docx,.ppt,.pptx,.txt,.py,.js,.html,.css",
+            init: function () {
+                var progressBar = document.querySelector('.progress');
+                this.on("uploadprogress", function (file, progress) {
+                    progressBar.style.display = 'block';
+                    var progressBarInner = document.querySelector('.progress-bar');
+                    progressBarInner.style.width = progress + "%";
+                    progressBarInner.innerHTML = progress + "%";
+                });
+
+                this.on("success", function (file, response) {
+                    console.log("File uploaded successfully:", response);
+                    progressBar.style.display = 'none';
+                });
+
+                this.on("error", function (file, response) {
+                    console.error("Error uploading file:", response);
+                    progressBar.style.display = 'none';
+                });
+
+                this.on("addedfile", function (file) {
+                    document.querySelector("#preview-files-btn").style.display = 'inline-block';
+                    document.querySelector("#remove-files-btn").style.display = 'inline-block';
+                });
+
+                this.on("removedfile", function () {
+                    var dropzone = Dropzone.forElement("#file-dropzone");
+                    if (dropzone.files.length === 0) {
+                        document.querySelector("#preview-files-btn").style.display = 'none';
+                        document.querySelector("#remove-files-btn").style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        function showPreview() {
+            var dropzone = Dropzone.forElement("#file-dropzone");
+            if (dropzone.files.length > 0) {
+                var file = dropzone.files[0];
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var preview;
+                    if (file.type.startsWith('image/')) {
+                        preview = document.createElement('img');
+                        preview.src = e.target.result;
+                        preview.classList.add('img-thumbnail');
+                    } else if (file.type === 'application/pdf') {
+                        preview = document.createElement('embed');
+                        preview.src = e.target.result;
+                        preview.type = 'application/pdf';
+                        preview.width = '100%';
+                        preview.height = '600px';
+                    } else if (file.type.startsWith('video/')) {
+                        preview = document.createElement('video');
+                        preview.src = e.target.result;
+                        preview.controls = true;
+                        preview.width = '100%';
+                    } else if (file.type === 'application/vnd.ms-powerpoint' || file.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+                        preview = document.createElement('iframe');
+                        preview.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(e.target.result)}`;
+                        preview.width = '100%';
+                        preview.height = '600px';
+                    } else if (file.type.startsWith('text/') || file.type === 'application/json' || file.type === 'application/xml' || file.type === 'application/javascript' || file.type === 'text/html' || file.type === 'text/css' || file.type === 'text/python') {
+                        preview = document.createElement('pre');
+                        preview.textContent = e.target.result;
+                        preview.classList.add('code-preview');
+                    } else {
+                        preview = document.createElement('p');
+                        preview.textContent = 'Preview not available for this file type.';
+                    }
+                    document.querySelector('.preview-container').appendChild(preview);
+                    document.querySelector('.preview-container').style.display = 'flex';
+                    document.querySelector('.preview-container').style.justifyContent = 'center';
+                };
+                reader.readAsText(file);
+            }
+        }
+
+
+        function checkFileSelected(action) {
+            var dropzone = Dropzone.forElement("#file-dropzone");
+            var count = dropzone.files.length;
+            if (count === 0) {
+                alert("Please upload a file before proceeding to " + (action === 'encrypt' ? 'encryption' : 'decryption') + ".");
+                return false;
+            } else if (count > 1) {
+                dropzone.removeAllFiles(true);
+                alert("Please upload only one file at a time for " + (action === 'encrypt' ? 'encryption' : 'decryption') + ".");
+                return false;
+            }
+            return true;
+        }
+
+        function removeAllFiles() {
+            var dropzone = Dropzone.forElement("#file-dropzone");
+            dropzone.removeAllFiles(true);
+            document.querySelector("#remove-files-btn").style.display = 'none';
+            document.querySelector("#preview-files-btn").style.display = 'none';
+        }
+    </script>
+
+    {% endblock %}
+</body>
+
+</html>

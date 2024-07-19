@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>Encryptify</title>
+</head>
+
+<body>
+    {% extends "layout.html" %}
+    {% block content %}
+    <div class="box position-relative">
+        <button type="button" class="close position-absolute" style="top: 10px; right: 10px;" aria-label="Close"
+            onclick="redirectToIndex()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="container mt-4 text-center">
+            <h4>Image Encryption</h4>
+        </div>
+        <form method="post">
+            {{ form.csrf_token }}
+            <div class="form-group mt-3">
+                {{ form.encryption_key.label }}
+                {{ form.encryption_key(class="form-control", id="encryption_key") }}
+                <button type="button" class="btn btn-secondary mt-3" onclick="generateRandomKey()">Generate Random
+                    Key</button>
+                {% if form.encryption_key.errors %}
+                {% for error in form.encryption_key.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
+        </form>
+        {% if success %}
+        <div class="container mt-4 ml-0">
+            <h5>Encryption Successful!</h5>
+            <a href="{{ url_for('encryption_download', key=download_file) }}" class="btn btn-success mt-3">Download
+                Encrypted File</a>
+        </div>
+        {% endif %}
+        {% if error_message %}
+        <div class="container mt-4">
+            <h5>Error Encountered:</h5>
+            <p>{{ error_message }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function generateRandomKey() {
+            const key = Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+            document.getElementById('encryption_key').value = key;
+        }
+
+        function redirectToIndex() {
+            window.location.href = '/';
+        }
+    </script>
+
+    {% endblock %}
+</body>
+
+</html>
